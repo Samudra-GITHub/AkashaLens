@@ -1,0 +1,499 @@
+/* ===========================
+   Fonts
+=========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ===========================
+   Tokens
+=========================== */
+
+:root{
+    --void:#0b1420;
+    --panel:#12233a;
+    --panel-line:rgba(224,138,60,.22);
+    --paper:#ede6d3;
+    --paper-ink:#241c12;
+    --amber:#e08a3c;
+    --terrain:#5c9174;
+    --ink:#e9e4d6;
+    --muted:#8fa3b8;
+
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'IBM Plex Sans',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+}
+
+/* ===========================
+   Reset
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+/* ===========================
+   Body
+=========================== */
+
+body{
+    position:relative;
+    font-family:var(--font-body);
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+    background:
+        radial-gradient(ellipse at 20% -10%, rgba(224,138,60,.10), transparent 55%),
+        radial-gradient(ellipse at 85% 110%, rgba(92,145,116,.10), transparent 50%),
+        radial-gradient(1px 1px at 10% 20%, #fff, transparent),
+        radial-gradient(1px 1px at 25% 65%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 40% 15%, #fff, transparent),
+        radial-gradient(1px 1px at 55% 80%, #fff, transparent),
+        radial-gradient(1px 1px at 70% 35%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 85% 60%, #fff, transparent),
+        radial-gradient(1px 1px at 95% 10%, #fff, transparent),
+        radial-gradient(1px 1px at 15% 90%, #fff, transparent),
+        radial-gradient(1px 1px at 65% 5%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 5% 50%, #fff, transparent),
+        var(--void);
+    background-repeat:no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+    background-size:100% 100%, 100% 100%, 340px 340px, 340px 340px, 340px 340px, 340px 340px, 340px 340px, 340px 340px, 340px 340px, 340px 340px, 340px 340px, 340px 340px;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+    background-image:
+        radial-gradient(1px 1px at 30% 40%, #fff, transparent),
+        radial-gradient(1px 1px at 60% 70%, #fff, transparent),
+        radial-gradient(1px 1px at 80% 20%, #fff, transparent),
+        radial-gradient(1px 1px at 45% 90%, #fff, transparent),
+        radial-gradient(1px 1px at 90% 85%, #fff, transparent);
+    background-repeat:repeat;
+    background-size:340px 340px;
+    opacity:.35;
+    animation:twinkle 6s ease-in-out infinite;
+}
+
+@keyframes twinkle{
+    0%,100%{ opacity:.15; }
+    50%{ opacity:.6; }
+}
+
+@media (prefers-reduced-motion:reduce){
+    body::before{ animation:none; opacity:.35; }
+}
+
+a,button,label{
+    font-family:inherit;
+}
+
+:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:3px;
+}
+
+/* ===========================
+   Header
+=========================== */
+
+header{
+    position:relative;
+    text-align:center;
+    padding:56px 20px 40px;
+    overflow:hidden;
+}
+
+.orbit-decor{
+    position:absolute;
+    left:50%;
+    top:-40px;
+    transform:translateX(-50%);
+    width:460px;
+    height:200px;
+    z-index:0;
+    pointer-events:none;
+}
+
+.orbit-ellipse{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:460px;
+    height:460px;
+    margin:-230px 0 0 -230px;
+    border:1px dashed rgba(224,138,60,.28);
+    border-radius:50%;
+    transform:scaleY(.42);
+}
+
+.orbit-squash{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:460px;
+    height:460px;
+    margin:-230px 0 0 -230px;
+    transform:scaleY(.42);
+}
+
+.orbit-spin{
+    position:absolute;
+    inset:0;
+    animation:orbit-spin 16s linear infinite;
+}
+
+.orbit-dot{
+    position:absolute;
+    top:0;
+    left:50%;
+    width:8px;
+    height:8px;
+    margin:-4px 0 0 -4px;
+    border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 12px 3px rgba(224,138,60,.65);
+}
+
+@keyframes orbit-spin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
+@media (prefers-reduced-motion:reduce){
+    .orbit-spin{ animation:none; }
+}
+
+header .eyebrow,
+header h1,
+header .tagline,
+header .subtitle{
+    position:relative;
+    z-index:1;
+}
+
+.eyebrow{
+    font-family:var(--font-mono);
+    font-size:13px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:18px;
+}
+
+header h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:58px;
+    letter-spacing:.01em;
+    color:var(--ink);
+}
+
+.tagline{
+    margin-top:12px;
+    font-size:19px;
+    font-weight:500;
+    color:var(--ink);
+}
+
+.subtitle{
+    margin-top:14px;
+    font-family:var(--font-mono);
+    color:var(--muted);
+    font-size:13px;
+    letter-spacing:.03em;
+}
+
+/* ===========================
+   Main Container
+=========================== */
+
+.container{
+    width:90%;
+    max-width:1300px;
+    margin:auto;
+}
+
+/* ===========================
+   Upload Section
+=========================== */
+
+.upload-section{
+    text-align:center;
+    margin-bottom:44px;
+}
+
+.upload-btn{
+    display:inline-block;
+    background:transparent;
+    color:var(--amber);
+    border:1px dashed var(--amber);
+    padding:15px 34px;
+    border-radius:4px;
+    font-family:var(--font-mono);
+    font-size:14px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:.25s ease;
+}
+
+.upload-btn:hover{
+    background:rgba(224,138,60,.1);
+    border-style:solid;
+}
+
+input{
+    display:none;
+}
+
+.filename{
+    margin-top:14px;
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--muted);
+}
+
+/* ===========================
+   Image Cards
+=========================== */
+
+.image-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
+    gap:30px;
+    margin-bottom:36px;
+}
+
+.card{
+    position:relative;
+    background:var(--panel);
+    padding:22px;
+    border-radius:6px;
+    border:1px solid var(--panel-line);
+}
+
+.card::before,
+.card::after{
+    font-family:var(--font-mono);
+    color:var(--amber);
+    opacity:.6;
+    font-size:13px;
+    position:absolute;
+    pointer-events:none;
+}
+
+.card::before{
+    content:"+";
+    top:8px;
+    left:10px;
+}
+
+.card::after{
+    content:"+";
+    bottom:8px;
+    right:10px;
+}
+
+.card h2{
+    text-align:center;
+    margin-bottom:16px;
+    font-family:var(--font-mono);
+    font-weight:500;
+    font-size:14px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+}
+
+.image-frame{
+    position:relative;
+    overflow:hidden;
+    border-radius:3px;
+    background:var(--paper);
+}
+
+.card img{
+    display:block;
+    width:100%;
+    height:350px;
+    object-fit:cover;
+    background:var(--paper);
+}
+
+/* Signature: scanning sweep on the reconstruction panel */
+.scan-card .image-frame::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    height:38%;
+    top:-38%;
+    background:linear-gradient(
+        to bottom,
+        transparent,
+        rgba(224,138,60,.28) 45%,
+        rgba(224,138,60,.55) 50%,
+        rgba(224,138,60,.28) 55%,
+        transparent
+    );
+    animation:scan-sweep 4.5s linear infinite;
+}
+
+@keyframes scan-sweep{
+    0%{ top:-38%; }
+    100%{ top:100%; }
+}
+
+@media (prefers-reduced-motion:reduce){
+    .scan-card .image-frame::after{
+        animation:none;
+    }
+}
+
+/* ===========================
+   Dashboard
+=========================== */
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:25px;
+    margin-bottom:36px;
+}
+
+.info-card{
+    background:var(--panel);
+    border-radius:6px;
+    padding:26px;
+    border:1px solid var(--panel-line);
+    border-left:3px solid var(--amber);
+}
+
+.info-card h3{
+    font-family:var(--font-mono);
+    font-weight:500;
+    font-size:13px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:20px;
+}
+
+.score{
+    font-family:var(--font-display);
+    font-size:46px;
+    font-weight:700;
+    color:var(--terrain);
+    margin-bottom:2px;
+}
+
+.score-unit{
+    display:block;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:16px;
+}
+
+.heatmap-placeholder{
+    height:180px;
+    border:1px dashed var(--panel-line);
+    border-radius:4px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:var(--muted);
+    font-family:var(--font-mono);
+    font-size:13px;
+}
+
+.info-card ul{
+    list-style:none;
+    font-family:var(--font-mono);
+    font-size:14px;
+}
+
+.info-card li{
+    display:flex;
+    justify-content:space-between;
+    margin:14px 0;
+    color:var(--ink);
+}
+
+.info-card li span:first-child{
+    color:var(--muted);
+}
+
+.status-dot{
+    display:inline-block;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--terrain);
+    margin-right:8px;
+    box-shadow:0 0 0 3px rgba(92,145,116,.2);
+    animation:pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse{
+    0%,100%{ opacity:1; }
+    50%{ opacity:.45; }
+}
+
+@media (prefers-reduced-motion:reduce){
+    .status-dot{ animation:none; }
+}
+
+/* ===========================
+   Footer
+=========================== */
+
+footer{
+    text-align:center;
+    padding:28px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.04em;
+    color:var(--muted);
+    border-top:1px solid var(--panel-line);
+}
+
+footer strong{
+    color:var(--ink);
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media(max-width:768px){
+
+header h1{
+    font-size:38px;
+}
+
+.tagline{
+    font-size:16px;
+}
+
+.subtitle{
+    font-size:12px;
+}
+
+.image-grid{
+    grid-template-columns:1fr;
+}
+
+.dashboard{
+    grid-template-columns:1fr;
+}
+
+}
