@@ -6,7 +6,7 @@ A deep-learning pipeline that reconstructs cloud-occluded satellite imagery, tur
 
 <br/>
 
-<img src="./assets/hero.png" width="100%" alt="AkashaLens hero" />
+<img src="./assets/hero-placeholder.svg" width="100%" alt="AkashaLens hero" />
 
 <br/>
 
@@ -14,8 +14,8 @@ A deep-learning pipeline that reconstructs cloud-occluded satellite imagery, tur
 
 <table width="100%">
 <tr>
-<td width="50%"><img src="./assets/screenshots/before.png" width="100%" alt="Cloud-occluded input" /><br/><sub align="center">Cloud-occluded input</sub></td>
-<td width="50%"><img src="./assets/screenshots/after.png" width="100%" alt="Reconstructed output" /><br/><sub align="center">Reconstructed output</sub></td>
+<td width="50%"><img src="./assets/screenshot-placeholder.svg" width="100%" alt="Cloud-occluded input" /><br/><sub align="center">Cloud-occluded input</sub></td>
+<td width="50%"><img src="./assets/screenshot-placeholder.svg" width="100%" alt="Reconstructed output" /><br/><sub align="center">Reconstructed output</sub></td>
 </tr>
 </table>
 
