@@ -10,14 +10,14 @@ cd AkashaLens
 pip install -r requirements.txt
 ```
 
-Dataset pairs go under `dataset/clear/` and `dataset/cloudy/` — see [README](./README.md#dataset).
+Dataset pairs go under `dataset/clear/` and `dataset/cloudy/` — see [README](./README.md#data-preparation).
 
 ## Before opening a PR
 
 ```bash
-python test.py
-python test_unet.py
-python test_dataset.py
+python -m tests.test_load_image
+python -m tests.test_unet
+python -m tests.test_dataset
 ```
 
 If you change training or model config (`config.py`), include before/after SSIM/PSNR numbers from `evaluate.py` in the PR description — these are the metrics the project is actually judged on.

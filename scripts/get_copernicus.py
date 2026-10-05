@@ -3,8 +3,9 @@ import requests
 
 # ---------------- CONFIGURATION ----------------
 
-USERNAME = "samudrakar8@gmail.com"
-PASSWORD = "Babuikar@2021"
+# Credentials come from the environment (see .env.example). Never hardcode them.
+USERNAME = os.environ.get("COPERNICUS_USERNAME")
+PASSWORD = os.environ.get("COPERNICUS_PASSWORD")
 
 BBOX = (
     "geography'SRID=4326;"
@@ -25,6 +26,13 @@ os.makedirs(cloudy_dir, exist_ok=True)
 # ---------------- AUTHENTICATION ----------------
 
 def get_access_token():
+
+    if not USERNAME or not PASSWORD:
+        print(
+            "Missing credentials: set COPERNICUS_USERNAME and "
+            "COPERNICUS_PASSWORD in your environment (see .env.example)."
+        )
+        return None
 
     auth_url = (
         "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/"

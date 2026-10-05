@@ -1,142 +1,166 @@
 # AkashaLens
 
-**AI-powered satellite cloud reconstruction.**
+> Cloud removal for satellite imagery: a U-Net that reconstructs cloud-occluded Sentinel-2 scenes, with a Flask app for interactive prediction.
 
-A deep-learning pipeline that reconstructs cloud-occluded satellite imagery, turning partially obscured Sentinel scenes into clear, usable ground imagery.
+Built for ISRO Hackathon 2026.
 
-<br/>
+## Overview
 
-<img src="./assets/hero-placeholder.svg" width="100%" alt="AkashaLens hero" />
+Cloud cover blocks optical satellite imagery exactly when the ground matters most. AkashaLens treats cloud removal as an image-to-image reconstruction problem: given a cloudy scene, predict the clear scene underneath. It includes tooling to download Sentinel-2 products from Copernicus, a PyTorch U-Net, training and evaluation scripts, and a web demo that also shows a cloud mask and a confidence heatmap for each prediction.
 
-<br/>
+This is a prototype. The bundled dataset is tiny (three cloudy/clear pairs), and no trained weights or benchmark results are included in the repository.
 
-## Before / After
+## Features
 
-<table width="100%">
-<tr>
-<td width="50%"><img src="./assets/screenshot-placeholder.svg" width="100%" alt="Cloud-occluded input" /><br/><sub align="center">Cloud-occluded input</sub></td>
-<td width="50%"><img src="./assets/screenshot-placeholder.svg" width="100%" alt="Reconstructed output" /><br/><sub align="center">Reconstructed output</sub></td>
-</tr>
-</table>
+- **U-Net reconstruction model** (three downsampling stages) trained with L1 loss and the Adam optimiser on 256×256 RGB image pairs
+- **Cloud detection and masking**: a heuristic based on luminance and colour saturation, which reports a cloud-cover percentage
+- **Confidence heatmap** derived from the cloud mask, so low-confidence regions of a reconstruction are visible
+- **Ground-truth evaluation** of MAE, PSNR and SSIM, either in the web app (optional upload) or across the dataset with `evaluate.py`
+- **Command-line inference** with `predict.py`
+- **Copernicus ingestion script** that downloads Sentinel-2 L1C products over a fixed area
+- **Flask web demo** with an upload form and result views
 
-<br/>
+## Tech Stack
 
-## Problem Statement
+| Area | Technology |
+| --- | --- |
+| Model | PyTorch, torchvision |
+| Image processing and metrics | Pillow, NumPy, SciPy, scikit-image, Matplotlib |
+| Web app | Flask, Werkzeug, vanilla JavaScript and CSS |
+| Data source | Copernicus Data Space (Sentinel-2) |
+| Deployment config | Vercel (`vercel.json`) |
 
-Cloud cover is one of the largest practical obstacles in optical Earth observation — a significant fraction of any given satellite pass over land is unusable because of it. AkashaLens treats cloud removal as an image-reconstruction problem: given a cloudy scene, predict the clear scene underneath.
-
-<br/>
-
-## AI Pipeline
-
-```
-Sentinel imagery ──▶ dataset pairing (cloudy / clear) ──▶ U-Net ──▶ reconstructed output
-                                                              │
-                                                              ▼
-                                                  SSIM / PSNR evaluation
-```
-
-- **Ingestion** — `scripts/get_copernicus.py` pulls source imagery from the Copernicus program
-- **Dataset** — paired `cloudy/` and `clear/` scenes, loaded via a custom PyTorch `Dataset` (`dataset.py`)
-- **Model** — a U-Net (`models/unet.py`) trained end-to-end on 256×256 image pairs
-- **Evaluation** — reconstruction quality measured with SSIM and PSNR (`scikit-image`)
-- **Serving** — a Flask app (`app.py`) exposes the trained model for interactive prediction
-
-<br/>
-
-## Dataset
-
-Training pairs live under `dataset/clear/` and `dataset/cloudy/` — matched clear and cloud-occluded versions of the same scene, resized to 256×256 before training.
-
-<br/>
-
-## Sentinel Imagery
-
-Source imagery is pulled from the **Copernicus** program (`scripts/get_copernicus.py`), which distributes Sentinel satellite data.
-
-<br/>
-
-## Model Architecture
-
-A U-Net encoder-decoder, trained with a configurable batch size and learning rate (`config.py`), on `IMAGE_SIZE = 256` inputs. Trained weights are saved to `saved_models/akashalens_model.pth` and loaded by both `predict.py` and the Flask app for inference.
-
-<br/>
-
-## Folder Structure
+## Project Structure
 
 ```
-akashalens/
-├── app.py               # Flask serving app
-├── config.py             # Dataset paths, training + model config
-├── dataset.py             # PyTorch Dataset for cloudy/clear pairs
-├── dataset/
-│   ├── clear/
-│   └── cloudy/
+AkashaLens/
+├── app.py               # Flask app (also the Vercel entry point)
+├── config.py            # Paths, image size, batch size, epochs, learning rate, device
+├── dataset.py           # SatelliteDataset: pairs cloudy/ and clear/ images
+├── train.py             # Training loop
+├── evaluate.py          # MAE / PSNR / SSIM over the dataset, plus comparison figures
+├── predict.py           # Reconstruct a single image from the command line
+├── utils.py             # Image loading, cloud detection, confidence map, metrics
 ├── models/
-│   └── unet.py            # U-Net architecture
+│   └── unet.py          # U-Net architecture
 ├── scripts/
-│   └── get_copernicus.py  # Sentinel imagery ingestion
-├── static/                # Flask app assets
-├── templates/              # Flask app templates
-├── train.py
-├── evaluate.py
-├── predict.py
-├── test.py / test_unet.py / test_dataset.py
-└── utils.py                # Image loading, SSIM/PSNR metrics
+│   └── get_copernicus.py  # Sentinel-2 download from Copernicus
+├── dataset/
+│   ├── cloudy/          # Cloud-occluded inputs
+│   └── clear/           # Clear targets
+├── tests/               # Smoke scripts: image loading, model shapes, dataset pairing
+├── static/  templates/  # Web app front end
+├── assets/              # README placeholder graphics
+├── vercel.json  requirements.txt  .env.example
+└── LICENSE  CHANGELOG.md  CONTRIBUTING.md
 ```
 
-<br/>
+The core modules sit at the repository root on purpose: they import each other as flat modules, paths in `config.py` are relative to the repository root, and `app.py` must stay at the root as the Vercel entry point. Run every command below from the repository root.
 
 ## Installation
+
+Requires Python 3 (PyTorch needs a supported version).
 
 ```bash
 git clone https://github.com/Samudra-GITHub/AkashaLens.git
 cd AkashaLens
+python -m venv .venv
+.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
-
-# train
-python train.py
-
-# evaluate
-python evaluate.py
-
-# run the demo app
-python app.py
 ```
 
-<br/>
+## Configuration
 
-## Tech Stack
+Only the Copernicus download script needs credentials. Create a free account at [dataspace.copernicus.eu](https://dataspace.copernicus.eu), then set:
 
-`PyTorch` · `torchvision` · `Flask` · `Pillow` · `NumPy` · `SciPy` · `scikit-image` · `Matplotlib`
+| Variable | Purpose |
+| --- | --- |
+| `COPERNICUS_USERNAME` | Copernicus Data Space account email |
+| `COPERNICUS_PASSWORD` | Copernicus Data Space password |
 
-<br/>
+`.env.example` is a template and `.env` is git-ignored. The scripts do not load `.env` themselves, so export the variables in your shell:
 
-## Results
+```bash
+export COPERNICUS_USERNAME=your_email        # PowerShell: $env:COPERNICUS_USERNAME="your_email"
+export COPERNICUS_PASSWORD=your_password
+```
 
-Reconstruction quality is tracked with SSIM (structural similarity) and PSNR (peak signal-to-noise ratio) against the held-out clear ground truth — see `evaluate.py` for the current evaluation pass.
+Never commit credentials. The training, prediction and web app code needs no secrets.
 
-<br/>
+## Data Preparation
 
-## ISRO Hackathon Journey
+Training data are paired images in `dataset/cloudy/` and `dataset/clear/`. Files are sorted by name and paired by position, so keep the two folders aligned. Images are resized to 256×256 at load time. The repository includes three sample pairs.
 
-AkashaLens was built for **ISRO Hackathon 2026**, framed around a real constraint in Earth observation: usable imagery is often blocked by cloud cover exactly when it's needed most.
+To fetch more Sentinel-2 data:
 
-<br/>
+```bash
+python scripts/get_copernicus.py
+```
+
+The script queries Sentinel-2 L1C products over a fixed bounding box, sorts them by cloud cover, and downloads the five clearest into `dataset/clear/` and the five cloudiest into `dataset/cloudy/`, as `.zip` product archives. The training code reads ordinary image files, so these archives must be converted to RGB images first, which this repository does not do for you. The script also pairs scenes by rank rather than by matching location and date, so review pairs before training on them.
+
+Check that the folders line up:
+
+```bash
+python -m tests.test_dataset
+```
+
+## Training
+
+```bash
+python train.py
+```
+
+With fewer than 10 pairs it trains on everything without a validation split ("prototype mode"). With 10 or more it uses an 80/20 train/validation split and saves the best validation checkpoint. Weights are written to `saved_models/akashalens_model.pth`, which is git-ignored. Hyperparameters (batch size, epochs, learning rate) are in `config.py`.
+
+## Evaluation and Inference
+
+```bash
+python evaluate.py                          # metrics over the dataset; figures saved to output/eval/
+python predict.py path/to/cloudy_image.jpg  # writes output/reconstructed_<name>
+```
+
+Both need trained weights in `saved_models/`.
+
+## Running the Web App
+
+```bash
+python app.py        # http://127.0.0.1:5000
+```
+
+Upload a cloudy image (optionally with a clear ground-truth image). The `/predict` endpoint returns the reconstruction, a cloud mask, a confidence heatmap, the cloud-cover and confidence percentages, and MAE / PSNR / SSIM when a ground truth is supplied. If no trained model is found, the app starts but logs a warning and prediction will not produce meaningful output. Uploads go to `uploads/` and results to `output/`, both git-ignored.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    S[Sentinel-2 via Copernicus] --> D[dataset/cloudy + clear]
+    D --> T[train.py<br/>U-Net, L1 loss]
+    T --> W[(saved_models/*.pth)]
+    W --> P[predict.py]
+    W --> A[app.py /predict]
+    W --> E[evaluate.py]
+    A --> M[Cloud mask +<br/>confidence heatmap]
+```
+
+At inference, `app.py` runs two things on the uploaded image: the rule-based cloud detector in `utils.py` (mask, cloud-cover percentage, confidence map) and the U-Net reconstruction.
+
+## Deployment
+
+`vercel.json` configures a `@vercel/python` build of `app.py`, serves `/static/*` directly and routes everything else to the app. Weights are not committed, so a deployment needs a trained model made available to the app. The repository does not document how PyTorch and the weights are packaged for Vercel, so treat deployment as unverified.
+
+## Screenshots
+
+`assets/` holds placeholder graphics only, so no screenshots are shown.
 
 ## Future Improvements
 
-- [ ] Expand the training set beyond the current clear/cloudy pairs
-- [ ] Push reconstruction accuracy toward ISRO-grade requirements
-- [ ] Evaluate alternative architectures (e.g. attention-based U-Net variants) against the current baseline
-- [ ] Add batch inference for full scene tiles, not just fixed 256×256 crops
-
-<br/>
+- Expand the dataset well beyond the current sample pairs
+- Add a script to convert Copernicus archives into aligned image pairs
+- Compare attention-based U-Net variants against the baseline
+- Batch inference for full scene tiles instead of fixed 256×256 resizes
+- Report evaluation results once a model has been trained on a real dataset
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
-
-<br/>
-
-<sub>Part of the Sams Studio product ecosystem. See the [profile](https://github.com/Samudra-GITHub) for the full lineup.</sub>
+MIT, see [LICENSE](LICENSE).

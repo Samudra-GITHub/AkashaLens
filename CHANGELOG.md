@@ -12,3 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Copernicus ingestion script for sourcing training data
 - SSIM / PSNR evaluation pipeline
 - Flask demo app for interactive prediction
+
+### Security
+
+- Copernicus credentials are read from `COPERNICUS_USERNAME` / `COPERNICUS_PASSWORD` instead of being hardcoded
+
+### Changed
+
+- Smoke scripts moved to `tests/` (run with `python -m tests.<name>`)
