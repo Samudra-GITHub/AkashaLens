@@ -6,3 +6,14 @@ output/*
 saved_models/*.pth
 .vscode/
 .DS_Store
+
+# Added by repository cleanup
+.claude/
+.claude-flow/
+CLAUDE.md
+AGENTS.md
+.env
+.env.*
+!.env.example
+*.log
+Thumbs.db
