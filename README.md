@@ -1,8 +1,33 @@
+<div align="center">
+
 # AkashaLens
 
-> Cloud removal for satellite imagery: a U-Net that reconstructs cloud-occluded Sentinel-2 scenes, with a Flask app for interactive prediction.
+**Cloud removal for satellite imagery: a U-Net that reconstructs what the clouds hide.**
 
-Built for ISRO Hackathon 2026.
+Sentinel-2 ingestion · cloud mask and confidence heatmap · Flask demo · built for ISRO Hackathon 2026
+
+<br />
+
+<table>
+  <tr>
+    <td align="center"><img src="dataset/cloudy/cloudy1.jpg" width="320" alt="Cloudy sample from the bundled dataset" /><br /><sub>Cloudy sample (<code>dataset/cloudy</code>)</sub></td>
+    <td align="center"><img src="dataset/clear/clear1.jpeg" width="320" alt="Clear sample from the bundled dataset" /><br /><sub>Clear sample (<code>dataset/clear</code>)</sub></td>
+  </tr>
+</table>
+<sub>Dataset samples, not model output. No trained weights ship with the repo.</sub>
+
+<br />
+<br />
+
+**[Overview](#overview)** &nbsp;·&nbsp; **[Features](#features)** &nbsp;·&nbsp; **[Getting started](#getting-started)** &nbsp;·&nbsp; **[Architecture](#architecture)** &nbsp;·&nbsp; **[Structure](#project-structure)**
+
+<br />
+
+![Python](https://img.shields.io/badge/Python-3-3776ab?style=flat-square&logo=python&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-U-Net-ee4c2c?style=flat-square&logo=pytorch&logoColor=white) ![Flask](https://img.shields.io/badge/Flask-web_demo-000000?style=flat-square&logo=flask&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+
+</div>
+
+---
 
 ## Overview
 
@@ -50,14 +75,13 @@ AkashaLens/
 │   └── clear/           # Clear targets
 ├── tests/               # Smoke scripts: image loading, model shapes, dataset pairing
 ├── static/  templates/  # Web app front end
-├── assets/              # README placeholder graphics
 ├── vercel.json  requirements.txt  .env.example
 └── LICENSE  CHANGELOG.md  CONTRIBUTING.md
 ```
 
 The core modules sit at the repository root on purpose: they import each other as flat modules, paths in `config.py` are relative to the repository root, and `app.py` must stay at the root as the Vercel entry point. Run every command below from the repository root.
 
-## Installation
+## Getting Started
 
 Requires Python 3 (PyTorch needs a supported version).
 
@@ -148,10 +172,6 @@ At inference, `app.py` runs two things on the uploaded image: the rule-based clo
 ## Deployment
 
 `vercel.json` configures a `@vercel/python` build of `app.py`, serves `/static/*` directly and routes everything else to the app. Weights are not committed, so a deployment needs a trained model made available to the app. The repository does not document how PyTorch and the weights are packaged for Vercel, so treat deployment as unverified.
-
-## Screenshots
-
-`assets/` holds placeholder graphics only, so no screenshots are shown.
 
 ## Future Improvements
 
